@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from collections import defaultdict
 from itertools import product
 from pyenigma import enigma, rotor
@@ -68,7 +65,16 @@ class Bombe:
                     
                 self.menu[letter_plain] = links_dict
 
-
+    def dict_to_plugboard(self, plugboard_dict):
+        pairs = []
+        processed = set()
+        for k in plugboard_dict:
+            if k not in processed and plugboard_dict[k] != k:
+                v = plugboard_dict[k]
+                pairs.append(k + v)
+                processed.update({k, v})
+        return ' '.join(pairs)
+    
     def add_contradiction(self, letter, letter_cipher):
         if letter not in self.contradictions:
             self.contradictions[letter] = set([letter_cipher])
@@ -105,17 +111,17 @@ class Bombe:
                 plugboard[guess] = self.paths_input
                 plugboard_possible = True
 
-                machine = enigma.Enigma(
+                # go through paths to check guess
+                for path in self.paths:
+
+                    machine = enigma.Enigma(
                             rotor.ROTOR_Reflector_C, 
                             rotor.ROTOR_I,
                             rotor.ROTOR_II, 
                             rotor.ROTOR_III, 
                             str(rotor_positions), 
-                            ""
+                            self.dict_to_plugboard(plugboard)
                         )
-
-                # go through paths to check guess
-                for path in self.paths:
                     
                     for i in range( len(path) - 1 ): 
 
@@ -127,13 +133,12 @@ class Bombe:
 
                         cipher_offset = letter_cipher_positions[0]
 
-                        # machine.encipher("X")
+                        machine.encipher("X")
                         for co in range(cipher_offset):
                             machine.encipher("X")
 
                         if ((letter in plugboard) and plugboard_possible): 
                             plug_letter = plugboard[letter]
-                            # plug_letter_cipher = enigma.cipher_letter_bombe(plug_letter)
                             plug_letter_cipher = machine.encipher(plug_letter)
 
                             if letter_cipher in self.contradictions:
