@@ -72,7 +72,7 @@ class Bombe_V1:
 
     def run(self, rotor_start="AAA", rotor_end="ZZZ"):
 
-        rotor_positions_combinations = self.generate_rotor_positions(rotor_start, rotor_end)
+        rotor_positions_combinations = generate_rotor_positions(rotor_start, rotor_end)
         self.possibilities = defaultdict()
         plugboard_possible = defaultdict(list)
 
@@ -127,12 +127,3 @@ class Bombe_V1:
 
         return plugboard_possible
     
-    def generate_rotor_positions(self, start="AAA", end="ZZZ"):
-        length = len(start)  
-    
-        all_combinations = [''.join(i) for i in product(alphabet, repeat=length)]
-        
-        start_idx = all_combinations.index(start)
-        end_idx = all_combinations.index(end) + 1  
-        
-        return all_combinations[start_idx:end_idx]
