@@ -1,10 +1,11 @@
 from collections import defaultdict
 from itertools import product
 from pyenigma import enigma, rotor
+from utils import generate_rotor_positions
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-class Bombe:
+class Bombe_V2:
 
     def __init__(self, 
                  plaintext = "INYAIGCVPBGLGL", 
@@ -26,7 +27,6 @@ class Bombe:
 
     def create_menu(self):
 
-        # model graph like: https://www.python.org/doc/essays/graphs/
         self.menu = defaultdict()
 
         for i, letter_cipher in enumerate(self.crib_cipher):
@@ -65,15 +65,11 @@ class Bombe:
                     
                 self.menu[letter_plain] = links_dict
 
-    def dict_to_plugboard(self, plugboard_dict):
-        pairs = []
-        processed = set()
-        for k in plugboard_dict:
-            if k not in processed and plugboard_dict[k] != k:
-                v = plugboard_dict[k]
-                pairs.append(k + v)
-                processed.update({k, v})
-        return ' '.join(pairs)
+        print("----------------------------")
+        print("Menu Diagram generated:")
+        print("----------------------------")
+        print(self.menu)
+
     
     def add_contradiction(self, letter, letter_cipher):
         if letter not in self.contradictions:
@@ -91,20 +87,15 @@ class Bombe:
             self.contradictions[letter_cipher] = plug_contradictions
 
 
-    def run(self):
+    def run(self, rotor_start="AAA", rotor_end="ZZZ"):
 
-        # loop through all combinations of rotors
-        rotor_positions_combinations = [''.join(i) for i in product(alphabet, repeat = 3)]
-
-        # viable plugboard connections for each rotor combination
+        rotor_positions_combinations = generate_rotor_positions(rotor_start, rotor_end)
         self.possibilities = defaultdict()
 
         for rotor_positions in rotor_positions_combinations:
 
-            # impossible plugboard connections
             self.contradictions = defaultdict()
 
-            # start making first plugboard guess
             for guess in alphabet:
                 plugboard = defaultdict()
                 plugboard[self.paths_input] = guess
@@ -119,8 +110,8 @@ class Bombe:
                             rotor.ROTOR_I,
                             rotor.ROTOR_II, 
                             rotor.ROTOR_III, 
-                            str(rotor_positions), 
-                            self.dict_to_plugboard(plugboard)
+                            str(rotor_positions), # rotors initial position (key)
+                            str(f"{path[0]}{guess}") # assume that the start letter is swaped with the guess letter by plugboard
                         )
                     
                     for i in range( len(path) - 1 ): 
@@ -133,8 +124,7 @@ class Bombe:
 
                         cipher_offset = letter_cipher_positions[0]
 
-                        machine.encipher("X")
-                        for co in range(cipher_offset):
+                        for offset in range(cipher_offset):
                             machine.encipher("X")
 
                         if ((letter in plugboard) and plugboard_possible): 
@@ -175,15 +165,15 @@ class Bombe:
                                 plugboard[plug_letter_cipher] = letter_cipher
                     
                     if not plugboard_possible:
-                        # avoid path because no assumptions can be made
+                        # no more assumptions can be made
+                        # just skip
+                        # let's try another guess
+                        # if all the guesses are invalid in the end
+                        # we need to try another rotors position and loop again
                         break
 
-                # Check if it found a good candidate and add it to the list
+                # found a potential result
                 if plugboard_possible:
-                    
-                    # TODO: check with the candidate plugboard letters if 
-                    # another part of the message is decoded
-
                     tuple_plugboard = tuple(sorted(plugboard.items()))
                     if tuple_plugboard not in self.possibilities:
                         self.possibilities[tuple_plugboard] = [rotor_positions]

@@ -16,6 +16,12 @@ python3 -m pip install pyenigma==0.4.0
 then run the script.
 ```shell
 cd src
+
+# batons methods
 python run_batons.py 
-python run_bombe.py
+
+# turing attack
+python run_bombe_v1.py
+# turing-welchman attack
+python run_bombe_v2.py
 ```

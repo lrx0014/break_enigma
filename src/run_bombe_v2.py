@@ -1,4 +1,4 @@
-from bombe import Bombe
+from bombe_v2 import Bombe_V2
 from pyenigma import enigma
 from pyenigma import rotor
 import ast
@@ -6,16 +6,16 @@ import ast
 ### CONFIG
 plaintext = "INYAIGCVPBGLGL"
 ciphertext = "YWAILLOTJYBZLI"
-path_routes = ["IYAI", "IYBGLI", "IAYBGLI"]
+path_routes = ["IAYBGLI"]
 path_start = "I"
 
-bombe_machine = Bombe(plaintext, ciphertext, path_routes, path_start)
+bombe_machine = Bombe_V2(plaintext, ciphertext, path_routes, path_start)
 
 print("--------------------")
 print("Started Bombing...")
 print("--------------------")
 
-possible_plugboards = bombe_machine.run()
+possible_plugboards = bombe_machine.run(rotor_start="AAA", rotor_end="ZZZ")
 n_possible_plugboards = len(possible_plugboards.keys())
 
 is_decrypted = False
