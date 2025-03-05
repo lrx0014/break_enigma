@@ -4,10 +4,10 @@ from pyenigma import rotor
 import ast
 
 ### CONFIG
-plaintext = "INYAIGCVPBGLGL"
-ciphertext = "YWAILLOTJYBZLI"
-path_routes = ["IAYBGLI"]
-path_start = "I"
+plaintext = "INYAIGCVPB"
+ciphertext = "YWAILLOTJY"
+path_routes = ["BYAILG"]
+path_start = "B"
 
 bombe_machine = Bombe_V2(plaintext, ciphertext, path_routes, path_start)
 

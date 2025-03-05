@@ -8,10 +8,10 @@ alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 class Bombe_V2:
 
     def __init__(self, 
-                 plaintext = "INYAIGCVPBGLGL", 
-                 ciphertext = "YWAILLOTJYBZLI",
-                 path_routes = ["IYAI", "IYBGLI", "IAYBGLI"],
-                 path_start = "I"):
+                 plaintext = "INYAIGCVPB", 
+                 ciphertext = "YWAILLOTJY",
+                 path_routes = ["BYAILG"],
+                 path_start = "B"):
 
         # crib
         self.crib_cipher = ciphertext
